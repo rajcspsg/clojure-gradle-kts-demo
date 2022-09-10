@@ -1,6 +1,7 @@
 plugins {
     id("java")
-    id("dev.clojurephant.clojure") version "0.7.0-alpha.1"
+    id("dev.clojurephant.clojure") version "0.7.0"
+    id("application")
 }
 
 group = "org.example"
@@ -14,12 +15,32 @@ repositories {
 
 dependencies {
     implementation ("org.clojure:clojure:1.11.1")
-    testRuntimeOnly ("org.ajoberstar:jovial:0.3.0")
+    testRuntimeOnly ("dev.clojurephant:jovial:0.4.1")
     compileOnly ("org.clojure:tools.namespace:1.3.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
 }
 
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
+clojure {
+    builds {
+        main {
+            aotAll()
+        }
+    }
+}
+
+tasks.jar {
+    manifest {
+        attributes(mapOf("Implementation-Title" to project.name,
+            "Implementation-Version" to project.version,
+        "Main-Class" to "main.main"))
+    }
+}
+
+application {
+    mainClass.set("main.main")
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
